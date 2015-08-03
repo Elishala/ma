@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Yoga Contact List</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <link href='http://fonts.googleapis.com/css?family=Philosopher' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="css/main.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=true"/>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places"></script>
+       <script>
+    var map;
+    var infowindow;
+
+    function initialize() {
+     var greensboro = new google.maps.LatLng(36.0800, -79.8194);
+
+     map = new google.maps.Map(document.getElementById('map-canvas'), {
+       center: greensboro,
+       zoom: 10
+     });
+
+     var request = {
+       location: greensboro,
+       radius: 500,
+       keyword: yoga,
+       name: yoga,
+       types: ['yoga']
+     };
+
+     infowindow = new google.maps.InfoWindow();
+     var service = new google.maps.places.PlacesService(map);
+     service.nearbySearch(request, callback);
+     }
+
+    function callback(results, status) {
+     if (status == google.maps.places.PlacesServiceStatus.OK) {
+       for (var i = 0; i < results.length; i++) {
+         createMarker(results[i]);
+       }
+      }
+     }
+
+    function createMarker(place) {
+     var placeLoc = place.geometry.location;
+     var marker = new google.maps.Marker({
+       map: map,
+       position: place.geometry.location
+     });
+
+     google.maps.event.addListener(marker, 'click', function() {
+       infowindow.setContent(place.name);
+       infowindow.open(map, this);
+      });
+     }
+
+    google.maps.event.addDomListener(window, 'load', initialize);
+       </script>
+
+  </head>
+  <body>
+    <h2>Yoga Studio Contact List</h2>
+    <div id="map-canvas"></div>
+    <header>
+      <nav>
+        <div class="container">
+          <ul>
+            <li><a href="#phone" title="phone" alt="phone number">phone</a></li>
+            <li><a href="#address" title="address" alt="address">address</a></li>
+            <li><a href="#email" title="email" alt="email">email</a></li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+    <section id="form-list">
+          <form action="https://maps.googleapis.com/maps/api/js?key=AIzaSyAfW75ngP5XIlP1lhX2OEPPYXidRMliXms&sensor=false" method="get">
+            <input type="text" name="city" id="search-bar" class="controls" placeholder="Enter a city"/>
+            <input class="btn" type="submit" name="search" value="search"/>
+          </form>
+    </section>
+    <section id="contact-dets">
+          <form action=" " method="post">
+            <h2>Studio information</h2>
+            <label>Studio Name</label>
+              <input type="text" name="name"></input>
+            <label>Studio Address</label>
+              <input type="text" id="address" name="address"></input>
+            <label>Studio Phone</label>
+              <input type="text" id="phone" name="phone"></input>
+            <label>Studio Email</label>
+              <input type="text" id="email" name="email"></input>
+          </form>
+      </section>
+
+      <footer> </footer>
+  </body>
+</html>
