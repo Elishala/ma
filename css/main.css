@@ -17,15 +17,59 @@ body {
   line-height: 1.2em;
 }
 
-#map-canvas {
+#map {
   height: 50%;
   width: 50%;
   /*for older browsers, IE6 use the text-align*/
   text-align: center;
   margin: auto;
   padding: 5%;
-  color: red;
 
+}
+.controls {
+  margin-top: 15px;
+  border: 1px solid transparent;
+  border-radius: 2px 0 0 2px;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  height: 32px;
+  outline: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+#box-input {
+  background-color: #fff;
+  font-size: 15px;
+  font-weight: 300;
+  margin-left: 12px;
+  padding: 0 11px 0 13px;
+  text-overflow: ellipsis;
+  width: 300px;
+  border-radius: 5px;
+  color: gray;
+}
+
+#box-input:focus {
+  border-color: green;
+
+}
+.box-container {
+  font-family: Philosopher;
+}
+
+#type-selector {
+  color: #fff;
+  background-color: #4d90fe;
+  padding: 5px 11px 0px 11px;
+}
+
+#type-selector label {
+  font-family: Philosopher;
+  font-size: 13px;
+  font-weight: 300;
+}
+
+#target {
+  width: 345px;
 }
 
 nav {
@@ -67,6 +111,7 @@ h1 {
   padding: 3%;
   font-size: 1.9em;
 }
+
 
 h2 {
   text-align: center;

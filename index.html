@@ -7,60 +7,74 @@
     <link href='http://fonts.googleapis.com/css?family=Philosopher' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="css/main.css">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=true"/>
-    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places"></script>
-       <script>
-    var map;
-    var infowindow;
+    <script>
+    // adding autocomplete when text is entered into search field, in relation to finding places on the map
+     function initAutocomplete() {
+       var map = new google.maps.Map(document.getElementById('map'), {
+         center: {lat: 36.0800, lng: -79.8194},
+          zoom: 13,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+       });
+    // creating search box and linking it to the UI
+     var input = document.getElementById('box-input');
+     var searchBox = new google.maps.places.SearchBox(input);
+     map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
 
-    function initialize() {
-     var greensboro = new google.maps.LatLng(36.0800, -79.8194);
-
-     map = new google.maps.Map(document.getElementById('map-canvas'), {
-       center: greensboro,
-       zoom: 10
+     // the SearchBox results are biased towards current maps's view
+     map.addListener('bounds_changed', function() {
+       searchBox.setBounds(map.getBounds());
      });
 
-     var request = {
-       location: greensboro,
-       radius: 500,
-       keyword: yoga,
-       name: yoga,
-       types: ['yoga']
-     };
+     var markers = [];
+    // [start region_getplaces]
+    // listen for the event fired when the user selects a place and retrieve details for that place
+     searchBox.addListener('places_changed', function() {
+       var places = searchBox.getPlaces();
 
-     infowindow = new google.maps.InfoWindow();
-     var service = new google.maps.places.PlacesService(map);
-     service.nearbySearch(request, callback);
-     }
-
-    function callback(results, status) {
-     if (status == google.maps.places.PlacesServiceStatus.OK) {
-       for (var i = 0; i < results.length; i++) {
-         createMarker(results[i]);
+       if (places.length == 0) {
+         return;
        }
-      }
-     }
 
-    function createMarker(place) {
-     var placeLoc = place.geometry.location;
-     var marker = new google.maps.Marker({
-       map: map,
-       position: place.geometry.location
+      //  clear out the old markers
+       markers.forEach(function(marker) {
+         marker.setMap(null);
+       });
+       markers = [];
+
+      //  for each place, retrieve the icon, name and location
+       var bounds = new google.maps.LatLngBounds();
+       places.forEach(function(place) {
+         var icon = {
+           url: place.icon,
+           size: new google.maps.Size(71, 71),
+           origin: new google.maps.Point(0, 0),
+           anchor: new google.maps.Point(17, 34),
+           scaledSize: new google.maps.Size(25, 25)
+         };
+
+        //  create a marker for each place in the area
+       markers.push(new google.maps.Marker({
+         map: map,
+         icon: icon,
+         title: place.name,
+         position: place.geometry.location
+       }));
+
+       if (place.geometry.viewport) {
+        //  only geocodes have viewport
+         bounds.union(place.geometry.viewport);
+       }  else {
+         bounds.extend(place.geometry.location);
+       }
      });
-
-     google.maps.event.addListener(marker, 'click', function() {
-       infowindow.setContent(place.name);
-       infowindow.open(map, this);
-      });
-     }
-
-    google.maps.event.addDomListener(window, 'load', initialize);
-       </script>
-
+     map.fitBounds(bound);
+   });
+  //  end of region_getplaces
+  }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?libraries=places&callback=initAutocomplete" async defer></script>
   </head>
   <body>
-    <h1>Yoga Studio Contact List</h1>
-    <div id="map-canvas"></div>
     <header>
       <nav>
         <div class="container">
@@ -72,12 +86,10 @@
         </div>
       </nav>
     </header>
-    <section id="form-list">
-          <form action="https://maps.googleapis.com/maps/api/js?key=AIzaSyAfW75ngP5XIlP1lhX2OEPPYXidRMliXms&sensor=false" method="get">
-            <input type="text" name="city" id="search-bar" class="controls" placeholder="Enter a city"/>
-            <input class="btn" type="submit" name="search" value="search"/>
-          </form>
-    </section>
+    <h1>Yoga Studio Contact List</h1>
+    <input id="box-input" class="controls" type="text" placeholder="Search Box">
+    <div id="map"></div>
+
     <section id="contact-dets">
           <form action=" " method="post">
             <h2>Studio Information</h2>
@@ -91,6 +103,6 @@
               <input type="text" id="email" name="email"></input>
           </form>
       </section>
-      <footer> </footer>
+    <footer> </footer>
   </body>
 </html>
